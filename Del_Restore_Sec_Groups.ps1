@@ -1,3 +1,28 @@
+<#
+.SYNOPSIS
+This script has 4 functions. Considering an input file available to delete security groups.
+1. Pre-implemenation: This will identify the SamAccountNames from input file and validate the existance in AD and create a CSV file as pre deletion existence evidence.
+2. Post-Implementation: This will validate the existance of the security groups in AD and generate CSV file with the error details to confirm the deletion of the groups post imlplementation.
+3. Implementation: This will delete the security groups from Active Directory
+4. Rollback: This will restore the deleted security groups.
+
+.DESCRIPTION
+This scrit is created as per the ITIL change implementation standards. It can help implement the change of security group deletion, take pre-implementation and post-implementation evidence report. 
+Also, it allows to rollback / restore the security groups(If recycle bin is enabled).
+
+.PARAMETER ParameterName
+N/A
+
+.EXAMPLE
+Example of how to use the script:
+.\Del_Restore_Sec_Groups.ps1
+
+.NOTES
+Author: Rattandeep Singh
+Date: 13 Aug 2023
+Version: V.0.1
+#>
+
 $csvfile = Import-Csv C:\temp\InputFile.Csv
 
 function PreImplementation{
