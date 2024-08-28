@@ -1,0 +1,48 @@
+
+$jpgFiles = Get-ChildItem -Path "D:\" -Recurse -Include "*.jpg"# | select -first 5
+
+  
+# Replace "input.csv" with your CSV file path
+#$csvFile = "input.csv"
+
+# Replace "output.csv" with your desired output CSV file path
+$outputFile = "D:\output-JPG-Hash.csv"
+
+# Assuming your CSV file has a column named "FilePath"
+#$files = Import-Csv $csvFile | Select-Object -ExpandProperty FilePath
+
+# Create a new CSV file with headers
+$csv = New-Object System.Collections.ArrayList
+$csv.Add([PSCustomObject]@{FilePath = "FilePath"; SHA256Hash = "SHA256Hash"})
+
+# Calculate SHA-256 hash for each file and add to CSV
+foreach ($jpgFile in $jpgFiles) {
+    $hash = Get-FileHash -Path $jpgFile -Algorithm SHA256
+    $csv.Add([PSCustomObject]@{FilePath = $jpgFile; SHA256Hash = $hash.Hash})
+}
+
+
+
+
+# Export the CSV data to a file
+$csv
+$csv | Export-Csv $outputFile -NoTypeInformation
+
+$groupedData = $csv | Group-Object SHA256Hash
+
+####################
+
+$newdata = New-Object System.Collections.ArrayList
+foreach($data in $groupedData)
+{
+    If($data.count -gt 1)
+    {
+ 
+        for($i=0;$i-lt$data.count;$i++)
+        {
+            $newdata.add([PSCustomObject]@{Count = $i+1 ;SHA256Hash = $data.group.SHA256Hash[$i];FilePath = $data.group.Filepath[$i]})
+            
+            
+            }
+    }
+}$newdata | Export-Csv d:\DupicateImages.csv
